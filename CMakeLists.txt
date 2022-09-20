@@ -3,4 +3,4 @@ project(SoftRenderer)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(SoftRenderer main.cpp)
+add_executable(SoftRenderer main.cpp TGAImage.cpp TGAImage.h)
