@@ -1,12 +1,11 @@
 #include <iostream>
 #include "tgaimage.h"
-#include <windows.h>
 
 const TGAColor white = TGAColor(255, 255, 255, 255);
 const TGAColor red   = TGAColor(255, 0,   0,   255);
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    std::cout << "Hello, World!哈哈" << std::endl;
     TGAImage image(100, 100, TGAImage::RGB);
     image.set(52, 41, red);
     image.flip_vertically(); // i want to have the origin at the left bottom corner of the image
