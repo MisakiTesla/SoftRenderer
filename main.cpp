@@ -1,5 +1,6 @@
 #include <iostream>
 #include "tgaimage.h"
+#include "Game.h"
 
 const TGAColor white = TGAColor(255, 255, 255, 255);
 const TGAColor red   = TGAColor(255, 0,   0,   255);
@@ -15,18 +16,19 @@ const TGAColor red   = TGAColor(255, 0,   0,   255);
 //}
 
 #include <iostream>
-#include <SDL.h>
+#include <string>
 
 //error LNK2019: 无法解析的外部符号 SDL_main
 //int main()
-int main(int argc, char* argv[])
-{
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window* window = SDL_CreateWindow("SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
+int main(int argc, char* argv[]) {
 
-    SDL_Delay(2000);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    Game game;
+    bool success = game.Initialize();
+    if (success)
+    {
+        game.Loop();
+    }
+    game.Shutdown();
+
     return 0;
-    std::cout << "Hello World!阿松大\n";
 }

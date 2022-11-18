@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 #add_executable(SoftRenderer main.cpp TGAImage.cpp TGAImage.h)
 #add_executable(SoftRenderer WIN32 mainWindow.cpp)
-add_executable(SoftRenderer main.cpp TGAImage.cpp TGAImage.h)
+add_executable(SoftRenderer main.cpp TGAImage.cpp TGAImage.h Game.cpp Game.h)
 
 find_package(sdl2 CONFIG REQUIRED)
 
