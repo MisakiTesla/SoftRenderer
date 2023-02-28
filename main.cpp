@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include "tgaimage.h"
 #include "Game.h"
 
@@ -17,12 +17,16 @@ const TGAColor red   = TGAColor(255, 0,   0,   255);
 
 #include <iostream>
 #include <string>
+#include <SDL_log.h>
 
 //error LNK2019: 无法解析的外部符号 SDL_main
 //int main()
 int main(int argc, char* argv[]) {
 
+
     Game game;
+    printf("哈哈");
+    SDL_Log("哈哈sdl");
     bool success = game.Initialize();
     if (success)
     {
