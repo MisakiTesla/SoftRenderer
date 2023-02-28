@@ -1,10 +1,12 @@
 //
-// Created by miha on 2022/11/18.
+// Created by 61923 on 2023/2/28.
 //
 
 #ifndef SOFTRENDERER_GAME_H
 #define SOFTRENDERER_GAME_H
 
+
+#include <SDL_video.h>
 
 class Game {
 public:
@@ -17,6 +19,7 @@ public:
     void	Loop();
     //!	游戏结束
     void	Shutdown();
+    bool	isRunning;		//!<	运行状态
 
 private:
     //!	处理事件
@@ -26,9 +29,7 @@ private:
     //!	渲染
     void	Draw();
 
-    class SDL_Window*	window;		//!<	窗口
-    bool	isRunning;		//!<	运行状态
-    float deltaTime;
+    SDL_Window *_window;
 };
 
 
