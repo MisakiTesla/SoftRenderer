@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by 61923 on 2023/2/28.
 //
 
@@ -7,6 +7,7 @@
 
 
 #include <SDL_video.h>
+#include <SDL_render.h>
 
 class Game {
 public:
@@ -29,7 +30,13 @@ private:
     //!	渲染
     void	Draw();
 
-    SDL_Window *_window;
+    SDL_Renderer* _renderer;//error C2143: 语法错误: 缺少“;”(在“*”的前面) 解决方法=> #include <SDL_render.h>
+    SDL_Window* _window;
+    SDL_Texture* _texture;
+
+    void CreateTexture();
+
+    void DrawTexture(SDL_Texture *texture, int posX = 0, int posY = 0);
 };
 
 
