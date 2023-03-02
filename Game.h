@@ -33,6 +33,8 @@ private:
     SDL_Renderer* _renderer;//error C2143: 语法错误: 缺少“;”(在“*”的前面) 解决方法=> #include <SDL_render.h>
     SDL_Window* _window;
     SDL_Texture* _texture;
+    float fpsUpdateInterval;//fps显示更新间隔
+    float fpsUpdateTimer;//fps显示更新间隔
 
     void CreateTexture();
 

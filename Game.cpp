@@ -5,6 +5,8 @@
 #include <SDL_log.h>
 #include <SDL.h>
 #include "Game.h"
+#include "Timer.h"
+
 void Game::Loop()
 {
     while (isRunning)
@@ -35,6 +37,8 @@ bool Game::Initialize() {
     _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     CreateTexture();
+    fpsUpdateInterval = 1.0f;
+    fpsUpdateTimer = 0;
 
 
     isRunning = true;
@@ -96,7 +100,24 @@ void Game::Event() {
     }
 }
 
+
+
 void Game::Update() {
+    // 计算新的增量时间
+    Timer::deltaTime = (SDL_GetTicks() - Timer::frameCount) / 1000.0f;
+
+    fpsUpdateTimer += Timer::deltaTime;
+    if(fpsUpdateTimer > fpsUpdateInterval)
+    {
+        fpsUpdateTimer -= fpsUpdateInterval;
+        SDL_Log("当前帧：%d", Timer::frameCount);
+        SDL_Log("当前FPS：%f", 1.0f/Timer::deltaTime);
+
+    }
+    // 计算新的一帧开始时所经过的总时间
+    Timer::frameCount = SDL_GetTicks();
+
+
     SDL_Delay(10);
 }
 
