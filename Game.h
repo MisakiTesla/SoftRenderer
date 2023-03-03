@@ -9,6 +9,13 @@
 #include <SDL_video.h>
 #include <SDL_render.h>
 
+typedef struct Pixel{
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+    unsigned char a;
+};
+
 class Game {
 public:
     //!	构造函数
@@ -32,11 +39,13 @@ private:
 
     SDL_Renderer* _renderer;//error C2143: 语法错误: 缺少“;”(在“*”的前面) 解决方法=> #include <SDL_render.h>
     SDL_Window* _window;
+    int width,height;
     SDL_Texture* _texture;
+    Pixel *_pixels;//_texture 的所有像素数据
     float fpsUpdateInterval;//fps显示更新间隔
     float fpsUpdateTimer;//fps显示更新间隔
 
-    void CreateTexture();
+    void CreateTexture(int width, int height);
 
     void DrawTexture(SDL_Texture *texture, int posX = 0, int posY = 0);
 };

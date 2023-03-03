@@ -36,7 +36,10 @@ bool Game::Initialize() {
     // 假如想使用之前提到过的垂直同步也可以在这里用按位或运算符带上SDL_RENDERER_PRESENTVSYNC。
     _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    CreateTexture();
+    width = 256;
+    height = 256;
+
+    CreateTexture(width, height);
     fpsUpdateInterval = 1.0f;
     fpsUpdateTimer = 0;
 
@@ -45,32 +48,50 @@ bool Game::Initialize() {
     return true;
 }
 
-void Game::CreateTexture() {
-    int w = 256;
-    int h = 256;
+void Game::CreateTexture(int w, int h) {
 
     _texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGBA32,
                                  SDL_TEXTUREACCESS_STREAMING, w,h);
+//
+//    // 准备一幅800*600的红色RGB图像数据
+//    unsigned char *rgb(new unsigned char[w * h * 4]);        // 乘以4是因为像素格式已指定为ARGB888，单个像素点占4字节
+//
+//    // 为上述图像数据赋值
+//    for (int j = 0; j < h; j++)
+//    {
+//        int lineR = j * w * 4;                                          // 每一行R分量的起始位置
+//        for (int i = 0; i < w * 4; i += 4)
+//        {
+//            rgb[lineR + i] = 128;                                                   // R
+//            rgb[lineR + i + 1] = 128;                                               // G
+//            rgb[lineR + i + 2] = 128;                                             // B
+//            rgb[lineR + i + 3] = 0;                                               // A
+//        }
+//    }
+//    // 5. 将内存中的RGB数据写入材质
+//    SDL_UpdateTexture(_texture, NULL, rgb, w * 4);
+
 
     // 准备一幅800*600的红色RGB图像数据
-    unsigned char *rgb(new unsigned char[w * h * 4]);        // 乘以4是因为像素格式已指定为ARGB888，单个像素点占4字节
+    _pixels = new Pixel[w * h];        // 乘以4是因为像素格式已指定为ARGB888，单个像素点占4字节
 
+    double uPerPixel = 256 / (double)w;
+    double vPerPixel = 256 / (double)h;
     // 为上述图像数据赋值
     for (int j = 0; j < h; j++)
     {
-        int lineR = j * w * 4;                                          // 每一行R分量的起始位置
-        for (int i = 0; i < w * 4; i += 4)
+        int lineR = j * w ;                                          // 每一行R分量的起始位置
+        for (int i = 0; i < w; i++)
         {
-            rgb[lineR + i] = 128;                                                   // R
-            rgb[lineR + i + 1] = 128;                                               // G
-            rgb[lineR + i + 2] = 128;                                             // B
-            rgb[lineR + i + 3] = 0;                                               // A
+            _pixels[lineR + i].r = i * uPerPixel;                                                   // R
+            _pixels[lineR + i].g = j * vPerPixel;                                               // G
+            _pixels[lineR + i].b = 0;                                             // B
+            _pixels[lineR + i].a = 0;                                               // A
         }
     }
 
-    // 5. 将内存中的RGB数据写入材质
-    SDL_UpdateTexture(_texture, NULL, rgb, w * 4);
-
+    // 5. 将内存中的RGB数据写入texture
+    SDL_UpdateTexture(_texture, NULL, _pixels, w * 4);
 
     //rect为NULL时更新整个texture
 //    SDL_UpdateTexture(_texture, NULL, )
@@ -85,6 +106,11 @@ void Game::Shutdown() {
 
 void Game::Event() {
     SDL_Event event;
+
+    int mousePosX,mousePosY;
+    SDL_GetMouseState(&mousePosX, &mousePosY);
+    Pixel* pixel;
+
     // 如果事件队列中有未处理的事件，按顺序处理
     while (SDL_PollEvent(&event))
     {
@@ -94,9 +120,34 @@ void Game::Event() {
             case SDL_QUIT:
                 isRunning = false;
                 break;
+            case SDL_MOUSEMOTION:		// 鼠标移动
+                SDL_Log("鼠标位置:%d,%d", mousePosX, mousePosY);
+
+                pixel = &_pixels[mousePosY * width + mousePosX];
+                pixel->r = 255;
+                pixel->g = 255;
+                pixel->b = 255;
+                pixel->a = 255;
+
+//                _pixels[mousePosY * mousePosX + mousePosX].r =255;
+//                _pixels[mousePosY * mousePosX + mousePosX].g =255;
+//                _pixels[mousePosY * mousePosX + mousePosX].b =255;
+//                _pixels[mousePosY * mousePosX + mousePosX].a =255;
+
+                SDL_UpdateTexture(_texture, NULL, _pixels, width * 4);
+                break;
+            case SDL_MOUSEBUTTONDOWN:	// 鼠标按键按下
+                SDL_Log("鼠标按键按下:%d,%d", mousePosX, mousePosY);
+
+                break;
+            case SDL_MOUSEBUTTONUP:        // 鼠标按键松开
+                break;
             default:
                 break;
         }
+
+
+
     }
 }
 
