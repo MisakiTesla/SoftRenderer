@@ -9,12 +9,16 @@
 #include <SDL_video.h>
 #include <SDL_render.h>
 
-typedef struct Pixel{
+typedef struct Color{
     unsigned char r;
     unsigned char g;
     unsigned char b;
     unsigned char a;
 };
+
+const Color COLOR_WHITE{255,255,255,255};
+const Color COLOR_RED{255,0,0,255};
+
 
 class Game {
 public:
@@ -41,13 +45,18 @@ private:
     SDL_Window* _window;
     int width,height;
     SDL_Texture* _texture;
-    Pixel *_pixels;//_texture 的所有像素数据
+    Color *_pixels;//_texture 的所有像素数据
     float fpsUpdateInterval;//fps显示更新间隔
     float fpsUpdateTimer;//fps显示更新间隔
+    int lastFrameMouseX = 0,lastFrameMouseY = 0;//上一帧鼠标位置
+
+    void DrawLine(int x0, int y0, int x1, int y1, Color color);
 
     void CreateTexture(int width, int height);
 
     void DrawTexture(SDL_Texture *texture, int posX = 0, int posY = 0);
+
+    void SetColor(int x, int y, Color color);
 };
 
 

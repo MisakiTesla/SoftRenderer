@@ -73,7 +73,7 @@ void Game::CreateTexture(int w, int h) {
 
 
     // 准备一幅800*600的红色RGB图像数据
-    _pixels = new Pixel[w * h];        // 乘以4是因为像素格式已指定为ARGB888，单个像素点占4字节
+    _pixels = new Color[w * h];        // 乘以4是因为像素格式已指定为ARGB888，单个像素点占4字节
 
     double uPerPixel = 256 / (double)w;
     double vPerPixel = 256 / (double)h;
@@ -109,7 +109,6 @@ void Game::Event() {
 
     int mousePosX,mousePosY;
     SDL_GetMouseState(&mousePosX, &mousePosY);
-    Pixel* pixel;
 
     // 如果事件队列中有未处理的事件，按顺序处理
     while (SDL_PollEvent(&event))
@@ -123,21 +122,29 @@ void Game::Event() {
             case SDL_MOUSEMOTION:		// 鼠标移动
                 SDL_Log("鼠标位置:%d,%d", mousePosX, mousePosY);
 
-                pixel = &_pixels[mousePosY * width + mousePosX];
-                pixel->r = 255;
-                pixel->g = 255;
-                pixel->b = 255;
-                pixel->a = 255;
-
-//                _pixels[mousePosY * mousePosX + mousePosX].r =255;
-//                _pixels[mousePosY * mousePosX + mousePosX].g =255;
-//                _pixels[mousePosY * mousePosX + mousePosX].b =255;
-//                _pixels[mousePosY * mousePosX + mousePosX].a =255;
+                SetColor(mousePosX, mousePosY, COLOR_WHITE);
 
                 SDL_UpdateTexture(_texture, NULL, _pixels, width * 4);
                 break;
             case SDL_MOUSEBUTTONDOWN:	// 鼠标按键按下
                 SDL_Log("鼠标按键按下:%d,%d", mousePosX, mousePosY);
+                if(lastFrameMouseX == 0)
+                {
+                    SDL_Log("lastFrameMouseX == NULL");
+                }
+                //画线
+                if(mousePosX < width && mousePosY < height)
+                {
+                    if(mousePosX != lastFrameMouseX && mousePosY != lastFrameMouseY)
+                    {
+                        DrawLine(lastFrameMouseX,lastFrameMouseY,
+                                 mousePosX,mousePosY,COLOR_RED);
+                    }
+                }
+
+
+                lastFrameMouseX = mousePosX;
+                lastFrameMouseY = mousePosY;
 
                 break;
             case SDL_MOUSEBUTTONUP:        // 鼠标按键松开
@@ -201,4 +208,17 @@ void Game::DrawTexture(SDL_Texture* texture, int posX, int posY) {
 
 Game::Game() {
 
+}
+
+void Game::SetColor(int x, int y, Color color) {
+    _pixels[y * width + x] = color;
+}
+
+//Bresenham’s Line Drawing Algorithm
+void Game::DrawLine(int x0, int y0, int x1, int y1, Color color) {
+    for (float t=0.; t<1.; t+=.01) {
+        int x = x0 + (x1-x0)*t;
+        int y = y0 + (y1-y0)*t;
+        SetColor(x, y, color);
+    }
 }

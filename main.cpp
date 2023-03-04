@@ -19,9 +19,28 @@ const TGAColor red   = TGAColor(255, 0,   0,   255);
 #include <string>
 #include <SDL_log.h>
 
+typedef struct Test {
+    int a;
+};
+
+static Test* t;
+
 //error LNK2019: 无法解析的外部符号 SDL_main
 //int main()
 int main(int argc, char* argv[]) {
+
+    t = new Test[5];
+
+    Test first = t[0];
+    Test* firstp = &t[0];
+
+    t[0].a = 666;
+
+//    SDL_Log("%d", first.a);
+    SDL_Log("%d", t[0].a);
+    SDL_Log("%d", firstp->a);
+    SDL_Log("%d", (*firstp).a);
+
 
 
     Game game;
