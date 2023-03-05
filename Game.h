@@ -9,7 +9,9 @@
 #include <SDL_video.h>
 #include <SDL_render.h>
 
-typedef struct Color{
+
+//typedef struct Color{
+struct Color{
     unsigned char r;
     unsigned char g;
     unsigned char b;
@@ -50,7 +52,7 @@ private:
     float fpsUpdateTimer;//fps显示更新间隔
     int lastFrameMouseX = 0,lastFrameMouseY = 0;//上一帧鼠标位置
 
-    void DrawLine(int x0, int y0, int x1, int y1, Color color);
+    void DrawLine(int startX, int startY, int endX, int endY, Color color);
 
     void CreateTexture(int width, int height);
 

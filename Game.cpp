@@ -2,8 +2,11 @@
 // Created by 61923 on 2023/2/28.
 //
 
+using namespace std;
 #include <SDL_log.h>
 #include <SDL.h>
+#include <cmath>
+#include <algorithm>
 #include "Game.h"
 #include "Timer.h"
 
@@ -120,9 +123,9 @@ void Game::Event() {
                 isRunning = false;
                 break;
             case SDL_MOUSEMOTION:		// 鼠标移动
-                SDL_Log("鼠标位置:%d,%d", mousePosX, mousePosY);
+//                SDL_Log("鼠标位置:%d,%d", mousePosX, mousePosY);
 
-                SetColor(mousePosX, mousePosY, COLOR_WHITE);
+//                SetColor(mousePosX, mousePosY, COLOR_WHITE);
 
                 SDL_UpdateTexture(_texture, NULL, _pixels, width * 4);
                 break;
@@ -215,10 +218,40 @@ void Game::SetColor(int x, int y, Color color) {
 }
 
 //Bresenham’s Line Drawing Algorithm
-void Game::DrawLine(int x0, int y0, int x1, int y1, Color color) {
-    for (float t=0.; t<1.; t+=.01) {
-        int x = x0 + (x1-x0)*t;
-        int y = y0 + (y1-y0)*t;
-        SetColor(x, y, color);
+void Game::DrawLine(int startX, int startY, int endX, int endY, Color color) {
+
+    //判断斜率>1, >1时 沿Y方向遍历
+    bool steep = false;
+    if (std::abs(startX - endX) < std::abs(startY - endY)) { // if the line is steep, we transpose the image
+        steep = true;
     }
+
+
+    if(steep)
+    {
+        //y坐标从小到大绘制，
+        if (startY > endY) { // make it left−to−right
+            std::swap(startX, endX);
+            std::swap(startY, endY);
+        }
+        for (int y=startY; y<=endY; y++) {
+            float t = (y-startY)/(float)(endY-startY);
+            int x = startX*(1.-t) + endX*t;
+            SetColor(x, y, color);
+        }
+    }
+    else
+    {
+        //x坐标从小到大绘制，
+        if (startX > endX) { // make it left−to−right
+            std::swap(startX, endX);
+            std::swap(startY, endY);
+        }
+        for (int x=startX; x<=endX; x++) {
+            float t = (x-startX)/(float)(endX-startX);
+            int y = startY*(1.-t) + endY*t;
+            SetColor(x, y, color);
+        }
+    }
+
 }
