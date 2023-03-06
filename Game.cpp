@@ -226,7 +226,6 @@ void Game::DrawLine(int startX, int startY, int endX, int endY, Color color) {
         steep = true;
     }
 
-
     if(steep)
     {
         //y坐标从小到大绘制，
@@ -234,10 +233,29 @@ void Game::DrawLine(int startX, int startY, int endX, int endY, Color color) {
             std::swap(startX, endX);
             std::swap(startY, endY);
         }
+
+        int dx = endX-startX;
+        int dy = endY-startY;
+
+        //每Y像素上的X增加量×dy×2,将所有delta和offset都×dx以消去分母，避免浮点运算
+//        float deltaYPerPixel = dy/(float)dx;
+        float deltaXPerPixelMultiDyMulti2 = std::abs(dx) * 2;
+        float offsetMultiDyMulti2 = 0;//offset×2, 将 offset > 0.5 优化为 2*offset > 1;
+
+        //x移动方向
+        int moveDirX = endX > startX ? 1 : -1;
+
+        int x = startX;
         for (int y=startY; y<=endY; y++) {
-            float t = (y-startY)/(float)(endY-startY);
-            int x = startX*(1.-t) + endX*t;
+
             SetColor(x, y, color);
+            offsetMultiDyMulti2 += deltaXPerPixelMultiDyMulti2;
+            if(offsetMultiDyMulti2 > dy)
+            {
+                //移动y坐标
+                x += moveDirX;
+                offsetMultiDyMulti2 -= dy*2;
+            }
         }
     }
     else
@@ -247,10 +265,30 @@ void Game::DrawLine(int startX, int startY, int endX, int endY, Color color) {
             std::swap(startX, endX);
             std::swap(startY, endY);
         }
+
+        int dx = endX-startX;
+        int dy = endY-startY;
+
+        //每X像素上的Y增加量×dx×2,将所有delta和offset都×dx以消去分母，避免浮点运算
+//        float deltaYPerPixel = dy/(float)dx;
+        int deltaYPerPixelMultiDxMulti2 = std::abs(dy) * 2;
+        int offsetMultiDxMulti2 = 0;//offset×2, 将 offset > 0.5 优化为 2*offset > 1;
+
+        //y移动方向
+        int moveDirY = endY > startY ? 1 : -1;
+
+        int y = startY;
         for (int x=startX; x<=endX; x++) {
-            float t = (x-startX)/(float)(endX-startX);
-            int y = startY*(1.-t) + endY*t;
             SetColor(x, y, color);
+
+            offsetMultiDxMulti2 += deltaYPerPixelMultiDxMulti2;
+//            if(offset > 0.5)
+            if(offsetMultiDxMulti2 > dx)
+            {
+                //移动y坐标
+                y += moveDirY;
+                offsetMultiDxMulti2 -= dx*2;
+            }
         }
     }
 
