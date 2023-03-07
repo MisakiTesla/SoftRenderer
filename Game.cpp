@@ -144,6 +144,14 @@ void Game::Event() {
                                  mousePosX,mousePosY,COLOR_RED);
                     }
                 }
+                {//case里面定义变量要用{}括起来
+                    //画三角形
+                    Vector2Int p1{mousePosX - 5,mousePosY - 5};
+                    Vector2Int p2{mousePosX + 5,mousePosY - 5};
+                    Vector2Int p3{mousePosX,mousePosY + 5};
+                    DrawTriangle(p1,p2,p3,COLOR_WHITE);
+
+                }
 
 
                 lastFrameMouseX = mousePosX;
@@ -292,4 +300,14 @@ void Game::DrawLine(int startX, int startY, int endX, int endY, Color color) {
         }
     }
 
+}
+
+void Game::DrawLine(Vector2Int startPos, Vector2Int endPos, Color color) {
+    DrawLine(startPos.x, startPos.y,endPos.x,endPos.y, color);
+}
+
+void Game::DrawTriangle(Vector2Int pos1, Vector2Int pos2, Vector2Int pos3, Color color) {
+    DrawLine(pos1,pos2,color);
+    DrawLine(pos1,pos3,color);
+    DrawLine(pos2,pos3,color);
 }

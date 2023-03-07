@@ -21,6 +21,9 @@ struct Color{
 const Color COLOR_WHITE{255,255,255,255};
 const Color COLOR_RED{255,0,0,255};
 
+struct Vector2Int{
+    int x,y;
+};
 
 class Game {
 public:
@@ -53,6 +56,8 @@ private:
     int lastFrameMouseX = 0,lastFrameMouseY = 0;//上一帧鼠标位置
 
     void DrawLine(int startX, int startY, int endX, int endY, Color color);
+    void DrawLine(Vector2Int startPos, Vector2Int endPos, Color color);
+    void DrawTriangle(Vector2Int pos1, Vector2Int pos2, Vector2Int pos3, Color color);
 
     void CreateTexture(int width, int height);
 
