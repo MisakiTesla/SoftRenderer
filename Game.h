@@ -25,6 +25,10 @@ struct Vector2Int{
     int x,y;
 };
 
+struct Vector3{
+    float x,y,z;
+};
+
 class Game {
 public:
     //!	构造函数
@@ -58,6 +62,7 @@ private:
     void DrawLine(int startX, int startY, int endX, int endY, Color color);
     void DrawLine(Vector2Int startPos, Vector2Int endPos, Color color);
     void DrawTriangle(Vector2Int pos1, Vector2Int pos2, Vector2Int pos3, Color color);
+    Vector3 GetBarycentricCoordinate(Vector2Int A, Vector2Int B, Vector2Int C, Vector2Int P);
 
     void CreateTexture(int width, int height);
 

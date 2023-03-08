@@ -310,4 +310,25 @@ void Game::DrawTriangle(Vector2Int pos1, Vector2Int pos2, Vector2Int pos3, Color
     DrawLine(pos1,pos2,color);
     DrawLine(pos1,pos3,color);
     DrawLine(pos2,pos3,color);
+
+    //填充颜色
+}
+
+Vector3 Game::GetBarycentricCoordinate(Vector2Int pos1, Vector2Int pos2, Vector2Int pos3, Vector2Int P) {
+    // P = (1-u-v)A + uB + vC
+    // P = 1A -uA - vA + uB + vC
+    // P = 1A + uB -uA + vC - vA
+    // P = A + u(B-A) + v(C-A)
+    // P = A + u(AB) +v(AC)
+    // 0 = A-P + u(AB) +v(AC)
+    // 0 = PA + u(AB) +v(AC)
+    // PA + u(AB) +v(AC) = 0
+    // 即
+    //① (PA)ₓ + u(AB)ₓ +v(AC)ₓ = 0
+    //② (PA)ᵧ + u(AB)ᵧ +v(AC)ᵧ = 0
+    //相当于向量(1,u,v)和((PA)ₓ,(AB)ₓ,(AC)ₓ) 垂直(叉乘为0);
+    //且向量(1,u,v)和((PA)ᵧ,(AB)ᵧ,(AC)ᵧ) 垂直(叉乘为0);
+
+
+    return Vector3();
 }
