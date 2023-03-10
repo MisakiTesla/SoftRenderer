@@ -311,10 +311,49 @@ void Game::DrawTriangle(Vector2Int pos1, Vector2Int pos2, Vector2Int pos3, Color
     DrawLine(pos1,pos3,color);
     DrawLine(pos2,pos3,color);
 
-    //填充颜色
+    //填充颜色 bounding box
+    Vector2Int bboxmin{width-1, height-1};
+    Vector2Int bboxmax{0, 0};
+    Vector2Int clamp{width-1, height-1};
+    {
+        bboxmin.x = std::max(0, std::min(bboxmin.x, pos1.x));
+        bboxmin.y = std::max(0, std::min(bboxmin.y, pos1.y));
+
+        bboxmax.x = std::min(clamp.x, std::max(bboxmax.x, pos1.x));
+        bboxmax.y = std::min(clamp.y, std::max(bboxmax.y, pos1.y));
+
+        bboxmin.x = std::max(0, std::min(bboxmin.x, pos2.x));
+        bboxmin.y = std::max(0, std::min(bboxmin.y, pos2.y));
+
+        bboxmax.x = std::min(clamp.x, std::max(bboxmax.x, pos2.x));
+        bboxmax.y = std::min(clamp.y, std::max(bboxmax.y, pos2.y));
+
+        bboxmin.x = std::max(0, std::min(bboxmin.x, pos3.x));
+        bboxmin.y = std::max(0, std::min(bboxmin.y, pos3.y));
+
+        bboxmax.x = std::min(clamp.x, std::max(bboxmax.x, pos3.x));
+        bboxmax.y = std::min(clamp.y, std::max(bboxmax.y, pos3.y));
+    }
+
+    Vector2Int P;
+    for (P.x=bboxmin.x; P.x<=bboxmax.x; P.x++) {
+        for (P.y=bboxmin.y; P.y<=bboxmax.y; P.y++) {
+            Vector3 bc_screen  = GetBarycentricCoordinate(pos1, pos2, pos3, P);
+            SDL_Log("bc%f %f %f", bc_screen.x, bc_screen.y, bc_screen.z);
+            //重心坐标任一小于0,则在三角形外
+            if (bc_screen.x<0 || bc_screen.y<0 || bc_screen.z<0) continue;
+            SetColor(P.x, P.y, color);
+        }
+    }
+//    SDL_Log("bbox min x %d y %d", bboxmin.x, bboxmin.y);
+//    SDL_Log("bbox max x %d y %d", bboxmax.x, bboxmax.y);
+//
+//    SetColor(bboxmin.x,bboxmin.y, COLOR_BLACK);
+//    SetColor(bboxmax.x,bboxmax.y, COLOR_RED);
+
 }
 
-Vector3 Game::GetBarycentricCoordinate(Vector2Int pos1, Vector2Int pos2, Vector2Int pos3, Vector2Int P) {
+Vector3 Game::GetBarycentricCoordinate(Vector2Int A, Vector2Int B, Vector2Int C, Vector2Int P) {
     // P = (1-u-v)A + uB + vC
     // P = 1A -uA - vA + uB + vC
     // P = 1A + uB -uA + vC - vA
@@ -322,13 +361,23 @@ Vector3 Game::GetBarycentricCoordinate(Vector2Int pos1, Vector2Int pos2, Vector2
     // P = A + u(AB) +v(AC)
     // 0 = A-P + u(AB) +v(AC)
     // 0 = PA + u(AB) +v(AC)
-    // PA + u(AB) +v(AC) = 0
+    //  u(AB) +v(AC) + PA = 0
     // 即
-    //① (PA)ₓ + u(AB)ₓ +v(AC)ₓ = 0
-    //② (PA)ᵧ + u(AB)ᵧ +v(AC)ᵧ = 0
-    //相当于向量(1,u,v)和((PA)ₓ,(AB)ₓ,(AC)ₓ) 垂直(叉乘为0);
-    //且向量(1,u,v)和((PA)ᵧ,(AB)ᵧ,(AC)ᵧ) 垂直(叉乘为0);
+    //① u(AB)ₓ +v(AC)ₓ + (PA)ₓ = 0
+    //② u(AB)ᵧ +v(AC)ᵧ + (PA)ᵧ = 0
+    //相当于向量(u,v,1)和((AB)ₓ,(AC)ₓ,(PA)ₓ) 垂直(点乘为0);
+    //且向量(u,v,1)和((AB)ᵧ,(AC)ᵧ,(PA)ᵧ) 垂直(点乘为0);
+    //即这意味着我们正在寻找一个同时与 （ABx，ACx，PAx） 和 （ABy，ACy，PAy） 正交的向量 （u，v，1）
+    //所以向量(u,v,1) = ①和②的叉乘
 
-
-    return Vector3();
+    // pos1 pos2 pos3 P都是整数坐标 叉乘的结果c为|a||b|sinθ (必定垂直于xy平面，即(0,0,z)这种形式)
+    // 又因为c的模即以a和b为两条边的平行四边形的面积,所以当c小于1时,pos1 pos2 pos3构成的是退化三角形
+    // 原文:
+    // `pts` and `P` has integer value as coordinates
+    //  so `abs(u[2])` < 1 means `u[2]` is 0, that means
+    //  triangle is degenerate, in this case return something with negative coordinates
+    Vector3 vec = Vector3::Cross(Vector3{(float)(B.x-A.x), (float)(C.x-A.x), (float)(A.x - P.x)},
+                                 Vector3{(float)(B.y-A.y), (float)(C.y-A.y), (float)(A.y - P.y)});
+    if (std::abs(vec.z)<1) return Vector3{-1,1,1};
+    return Vector3{1.f-(vec.x+vec.y)/vec.z, vec.x/vec.z, vec.y/vec.z};
 }

@@ -20,6 +20,7 @@ struct Color{
 
 const Color COLOR_WHITE{255,255,255,255};
 const Color COLOR_RED{255,0,0,255};
+const Color COLOR_BLACK{0,0,0,255};
 
 struct Vector2Int{
     int x,y;
@@ -27,6 +28,11 @@ struct Vector2Int{
 
 struct Vector3{
     float x,y,z;
+public:
+    static Vector3 Cross(Vector3 a, Vector3 b)
+    {
+        return Vector3{a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x};
+    }
 };
 
 class Game {
