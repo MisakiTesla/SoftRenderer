@@ -28,13 +28,6 @@ int main(int argc, char* argv[]) {
     SDL_Log("argc %s",argv);
 
 
-    Model *model = NULL;
-    if (2==argc) {
-        model = new Model(argv[1]);
-    } else {
-        model = new Model("obj/african_head.obj");
-    }
-
 
 
     Game game;

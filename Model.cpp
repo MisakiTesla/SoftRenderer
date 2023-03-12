@@ -8,11 +8,20 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <SDL_log.h>
 #include "model.h"
-
+#include <direct.h>
 Model::Model(const char *filename) : verts_(), faces_() {
     std::ifstream in;
+    char dir[1000];
+    getcwd(dir, 1000);
+    SDL_Log(dir);
     in.open (filename, std::ifstream::in);
+    if (in.fail())
+    {
+        SDL_Log("未找到文件 %s", filename);
+    }
+
     if (in.fail()) return;
     std::string line;
     while (!in.eof()) {

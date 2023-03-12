@@ -9,6 +9,7 @@ using namespace std;
 #include <algorithm>
 #include "Game.h"
 #include "Timer.h"
+#include "Model.h"
 
 void Game::Loop()
 {
@@ -28,7 +29,7 @@ bool Game::Initialize() {
         return false;
     }
 
-    _window = SDL_CreateWindow("SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600,
+    _window = SDL_CreateWindow("SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 1024,
                                           SDL_WINDOW_SHOWN);
     if (!_window) {
         SDL_Log("SDL_Init:%d",SDL_GetError());
@@ -39,8 +40,8 @@ bool Game::Initialize() {
     // 假如想使用之前提到过的垂直同步也可以在这里用按位或运算符带上SDL_RENDERER_PRESENTVSYNC。
     _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    width = 256;
-    height = 256;
+    width = 768;
+    height = 768;
 
     CreateTexture(width, height);
     fpsUpdateInterval = 1.0f;
@@ -92,6 +93,34 @@ void Game::CreateTexture(int w, int h) {
             _pixels[lineR + i].a = 0;                                               // A
         }
     }
+
+    //加载模型
+    Model *model = NULL;
+//    if (2 == argc) {
+//        model = new Model(argv[1]);
+//    }
+//    else
+    {
+        model = new Model("../../res/lightning_obj01.obj");
+//        model = new Model("../../res/african_head.obj");
+    }
+    //绘制模型
+    SDL_Log("model faces %d", model->nfaces());
+    for (int i=0; i<model->nfaces(); i++) {
+        std::vector<int> face = model->face(i);
+        for (int j=0; j<3; j++) {
+            Vector3 v0 = model->vert(face[j]);
+            Vector3 v1 = model->vert(face[(j+1)%3]);
+            int x0 = (v0.x+1.)*width/2.;
+            int y0 = (v0.y+1.)*height/2.;
+            int x1 = (v1.x+1.)*width/2.;
+            int y1 = (v1.y+1.)*height/2.;
+//            DrawLine(x0, y0, x1, y1, COLOR_WHITE);
+//flip Y axis
+            DrawLine(x0, height - y0, x1, height - y1, COLOR_WHITE);
+        }
+    }
+
 
     // 5. 将内存中的RGB数据写入texture
     SDL_UpdateTexture(_texture, NULL, _pixels, w * 4);
@@ -222,6 +251,12 @@ Game::Game() {
 }
 
 void Game::SetColor(int x, int y, Color color) {
+    //avoid overflow
+    if(x < 0 || y < 0 || x >= width || y >= width)
+    {
+        return;
+    }
+
     _pixels[y * width + x] = color;
 }
 
