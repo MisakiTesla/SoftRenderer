@@ -60,7 +60,8 @@ private:
     SDL_Window* _window;
     int width,height;
     SDL_Texture* _texture;
-    Color *_pixels;//_texture 的所有像素数据
+    Color *_pixels;//_texture 的所有像素数据 大小为width*height
+    float *_depths;//ZBuffer 大小为width*height
     float fpsUpdateInterval;//fps显示更新间隔
     float fpsUpdateTimer;//fps显示更新间隔
     int lastFrameMouseX = 0,lastFrameMouseY = 0;//上一帧鼠标位置
