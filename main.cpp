@@ -27,6 +27,11 @@ int main(int argc, char* argv[]) {
     SDL_Log("argc %d", argc);
     SDL_Log("argc %s",argv);
 
+    Vector3 a{0,0,2};
+    a.Normalize();
+    SDL_Log("v %f %f %f", a.x,a.y,a.z);
+
+
 
 
 
